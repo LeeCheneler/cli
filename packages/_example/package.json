@@ -1,0 +1,19 @@
+{
+  "name": "example",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "ts-engine build --node-app",
+    "lint": "ts-engine lint",
+    "start": "ts-engine start",
+    "test": "ts-engine test",
+    "typecheck": "ts-engine typecheck"
+  },
+  "dependencies": {
+    "@leecheneler/cli": "^1.0.0",
+    "@ts-engine/runtime": "^1.11.0"
+  },
+  "devDependencies": {
+    "@ts-engine/cli": "^1.11.0"
+  }
+}
