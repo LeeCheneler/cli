@@ -31,13 +31,13 @@ it("should execute middlware in order", async () => {
 
 it("should execute next middlware only if next() is called", async () => {
   const result = await createCli()
-    .use(async (ctx, next) => {
+    .use(async () => {
       console.log("1");
     })
-    .use(async (ctx, next) => {
+    .use(async () => {
       console.log("2");
     })
-    .use(async (ctx, next) => {
+    .use(async () => {
       console.log("3");
     })
     .run([]);

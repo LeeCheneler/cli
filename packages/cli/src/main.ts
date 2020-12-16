@@ -152,3 +152,10 @@ const composeMiddleware = (middlewares: MiddlwareFunction[]) => {
     return dispatch(0);
   };
 };
+
+export const middleware = {
+  version: (version: string) => async (ctx: Context, next: NextFunction) => {
+    console.log(version);
+    await next();
+  },
+};

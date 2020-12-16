@@ -14,7 +14,7 @@ afterEach(() => {
 it("should exit with 1 and present help if no command is provided", async () => {
   const result = await createCli()
     .useCommand("test", async () => {})
-    .run(["--no-a-command"]);
+    .run(["--not-a-command"]);
 
   expect(result.code).toBe(1);
   expect(consoleErrorMock).toHaveBeenCalledWith("Please provide a command.");
