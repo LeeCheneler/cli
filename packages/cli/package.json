@@ -13,7 +13,10 @@
     "typecheck": "ts-engine typecheck --emit"
   },
   "devDependencies": {
-    "@ts-engine/cli": "^1.11.0"
+    "@ts-engine/cli": "^1.11.0",
+    "@types/minimist": "^1.2.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "minimist": "^1.2.5"
+  }
 }

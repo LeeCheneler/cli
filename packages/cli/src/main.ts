@@ -1,3 +1,5 @@
+import minimist from "minimist";
+
 export interface CliResult {
   code: number;
 }
@@ -12,9 +14,25 @@ export const createCli = (): Cli => {
   const middlewares: MiddlwareFunction[] = [errorHandler];
   const context: Context = {
     args: [],
+    parsedArgs: {},
     code: 0,
     throw: (code: number, message: string) => {
       throw new CliError(code, message);
+    },
+    assert: (passed: boolean, message: string) => {
+      if (!passed) {
+        context.throw(1, message);
+      }
+    },
+    assertType: (
+      name: string,
+      value: any,
+      expectedType: "boolean" | "number" | "string"
+    ) => {
+      context.assert(
+        typeof value === expectedType,
+        `Argument "${name}" must be a ${expectedType}.`
+      );
     },
   };
 
@@ -31,6 +49,8 @@ export const createCli = (): Cli => {
         const [command] = ctx.args;
         if (command === name) {
           await middleware(ctx, next);
+        } else {
+          await next();
         }
       };
 
@@ -40,6 +60,8 @@ export const createCli = (): Cli => {
     },
     run: async (args: string[]) => {
       context.args = args;
+      context.parsedArgs = minimist(args);
+
       await composeMiddleware(middlewares)(context, async () => {});
       return { code: context.code };
     },
@@ -54,10 +76,17 @@ class CliError extends Error {
   }
 }
 
-export interface Context {
+export interface Context<TParsedArgs = {}> {
   args: string[];
   code: number;
+  parsedArgs: TParsedArgs;
   throw: (code: number, message: string) => void;
+  assert: (passed: boolean, message: string) => void;
+  assertType: (
+    name: string,
+    value: any,
+    expectedType: "boolean" | "number" | "string"
+  ) => void;
 }
 
 export type NextFunction = () => Promise<void>;
@@ -82,6 +111,7 @@ const errorHandler: MiddlwareFunction = async (
 
 export type MiddlwareFunction = (ctx: any, next: NextFunction) => Promise<void>;
 
+// implementation taken from koa-compose https://github.com/koajs/compose
 const composeMiddleware = (middlewares: MiddlwareFunction[]) => {
   if (!Array.isArray(middlewares)) {
     throw new TypeError("Middleware stack must be an array!");
