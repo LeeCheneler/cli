@@ -47,3 +47,15 @@ it("should execute next middlware only if next() is called", async () => {
   expect(consoleLogMock).not.toHaveBeenCalledWith("2");
   expect(consoleLogMock).not.toHaveBeenCalledWith("3");
 });
+
+it("should throw error if next() is called multiple times", async () => {
+  const error = new Error();
+  expect(() =>
+    createCli()
+      .use(async (ctx, next) => {
+        await next();
+        await next();
+      })
+      .run([])
+  ).rejects.toThrowError("next() called multiple times");
+});

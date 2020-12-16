@@ -1,4 +1,4 @@
-import minimist from "minimist";
+import minimist, { ParsedArgs } from "minimist";
 
 export interface CliResult {
   code: number;
@@ -14,7 +14,7 @@ export const createCli = (): Cli => {
   const middlewares: MiddlwareFunction[] = [errorHandler];
   const context: Context = {
     args: [],
-    parsedArgs: {},
+    parsedArgs: { _: [] },
     code: 0,
     throw: (code: number, message: string) => {
       throw new CliError(code, message);
@@ -35,7 +35,7 @@ export const createCli = (): Cli => {
       );
     },
     assertRequired: (name: string, value: any) => {
-      context.assert(value !== undefined, `Argument "${name}" is required,`);
+      context.assert(value !== undefined, `Argument "${name}" is required.`);
     },
   };
 
@@ -49,7 +49,12 @@ export const createCli = (): Cli => {
         ctx: Context,
         next: NextFunction
       ) => {
-        const [command] = ctx.args;
+        if (ctx.parsedArgs._.length === 0) {
+          ctx.throw(1, "Please provide a command.");
+        }
+
+        const [command] = ctx.parsedArgs._;
+
         if (command === name) {
           await middleware(ctx, next);
         } else {
@@ -65,7 +70,7 @@ export const createCli = (): Cli => {
       context.args = args;
       context.parsedArgs = minimist(args);
 
-      await composeMiddleware(middlewares)(context, async () => {});
+      await composeMiddleware(middlewares)(context);
       return { code: context.code };
     },
   };
@@ -82,7 +87,7 @@ class CliError extends Error {
 export interface Context<TParsedArgs = {}> {
   args: string[];
   code: number;
-  parsedArgs: TParsedArgs;
+  parsedArgs: TParsedArgs & ParsedArgs;
   throw: (code: number, message: string) => void;
   assert: (passed: boolean, message: string) => void;
   assertType: (
@@ -117,17 +122,7 @@ export type MiddlwareFunction = (ctx: any, next: NextFunction) => Promise<void>;
 
 // implementation taken from koa-compose https://github.com/koajs/compose
 const composeMiddleware = (middlewares: MiddlwareFunction[]) => {
-  if (!Array.isArray(middlewares)) {
-    throw new TypeError("Middleware stack must be an array!");
-  }
-
-  for (const fn of middlewares) {
-    if (typeof fn !== "function") {
-      throw new TypeError("Middleware must be composed of functions!");
-    }
-  }
-
-  return function (context: Context, next: NextFunction) {
+  return function (context: Context, next?: NextFunction) {
     let lastCalledMiddlewareIndex = -1;
 
     const dispatch = async (middlewareIndex: number): Promise<void> => {
@@ -139,7 +134,9 @@ const composeMiddleware = (middlewares: MiddlwareFunction[]) => {
 
       let middlewareFunc = middlewares[middlewareIndex];
 
-      if (middlewareIndex === middlewares.length) middlewareFunc = next;
+      if (middlewareIndex === middlewares.length) {
+        middlewareFunc = next;
+      }
 
       if (!middlewareFunc) {
         return Promise.resolve();
