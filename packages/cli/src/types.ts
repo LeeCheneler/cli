@@ -7,6 +7,7 @@ export interface Context<TParsedArgs = {}> {
     name: string;
     description: string;
   }[];
+  commandName: string | null;
   parsedArgs: TParsedArgs & ParsedArgs;
   throw: (code: number, message: string) => void;
   assert: (passed: boolean, message: string) => void;

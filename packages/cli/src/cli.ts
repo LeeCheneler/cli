@@ -29,6 +29,7 @@ export const createCli = (options: CreateCliOptions): Cli => {
     parsedArgs: { _: [] },
     code: 0,
     commands: [],
+    commandName: "unknown",
     throw: (code: number, message: string) => {
       throw new CliError(code, message);
     },
@@ -67,13 +68,7 @@ export const createCli = (options: CreateCliOptions): Cli => {
         ctx: Context,
         next: NextFunction
       ) => {
-        if (ctx.parsedArgs._.length === 0) {
-          ctx.throw(1, "Please provide a command.");
-        }
-
-        const [command] = ctx.parsedArgs._;
-
-        if (command === name) {
+        if (context.commandName === name) {
           await middleware(ctx, next);
         } else {
           await next();
@@ -85,9 +80,6 @@ export const createCli = (options: CreateCliOptions): Cli => {
       return cli;
     },
     run: async (args: string[]) => {
-      context.args = args;
-      context.parsedArgs = minimist(args);
-
       // register default commands
       cli.useCommand("version", "Display version.", version(options.version));
       cli.useCommand(
@@ -95,6 +87,26 @@ export const createCli = (options: CreateCliOptions): Cli => {
         "Display help.",
         help({ name: options.name, description: options.description })
       );
+
+      // ensure a known command is provided
+      if (args.length === 0) {
+        console.error("Please provide a command.");
+        return { code: 1 };
+      }
+
+      context.commandName = args[0];
+      if (!context.commands.find((c) => c.name === context.commandName)) {
+        console.error(
+          `Command "${context.commandName}" not recognised. Run "${options.name} help" to see a list of commands.`
+        );
+        return { code: 1 };
+      }
+
+      // parse args and run
+      const [, ...remainingArgs] = args;
+
+      context.args = remainingArgs;
+      context.parsedArgs = minimist(remainingArgs);
 
       await composeMiddleware(middlewares)(context);
       return { code: context.code };
