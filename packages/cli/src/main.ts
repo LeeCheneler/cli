@@ -34,6 +34,9 @@ export const createCli = (): Cli => {
         `Argument "${name}" must be a ${expectedType}.`
       );
     },
+    assertRequired: (name: string, value: any) => {
+      context.assert(value !== undefined, `Argument "${name}" is required,`);
+    },
   };
 
   const cli: Cli = {
@@ -87,6 +90,7 @@ export interface Context<TParsedArgs = {}> {
     value: any,
     expectedType: "boolean" | "number" | "string"
   ) => void;
+  assertRequired: (name: string, value: any) => void;
 }
 
 export type NextFunction = () => Promise<void>;

@@ -15,6 +15,7 @@ const throwExample = async (
   ctx: Context<{ code: number }>,
   next: NextFunction
 ) => {
+  ctx.assertRequired("code", ctx.parsedArgs.code);
   ctx.assertType("code", ctx.parsedArgs.code, "number");
   ctx.throw(
     ctx.parsedArgs.code,
