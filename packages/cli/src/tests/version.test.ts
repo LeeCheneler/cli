@@ -1,17 +1,16 @@
-import { createCli, middleware } from "../main";
+import { EXAMPE_CLI_OPTIONS } from "../test-utils/cli-options";
+import { mockConsole } from "../test-utils/console";
+import { createCli } from "../main";
 
-const consoleLogMock = jest.fn();
-console.log = consoleLogMock;
+const consoleMock = mockConsole();
 
 afterEach(() => {
-  consoleLogMock.mockReset();
+  consoleMock.reset();
 });
 
 it("should print the version", async () => {
-  const result = await createCli()
-    .useCommand("version", middleware.version("1.0.0"))
-    .run(["version"]);
+  const result = await createCli(EXAMPE_CLI_OPTIONS).run(["version"]);
 
   expect(result.code).toBe(0);
-  expect(consoleLogMock).toHaveBeenCalledWith("1.0.0");
+  expect(consoleMock.log).toHaveBeenCalledWith(EXAMPE_CLI_OPTIONS.version);
 });
