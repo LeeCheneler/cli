@@ -30,7 +30,7 @@ export const bootstrap = () => {
       {
         name: "fourth",
         description: "Fourth argument.",
-        type: "string",
+        type: "object",
         required: true,
       },
       {

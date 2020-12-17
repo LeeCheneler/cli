@@ -10,7 +10,7 @@ export interface Positional {
 export interface Argument {
   name: string;
   description: string;
-  type: "boolean" | "number" | "string";
+  type: "boolean" | "number" | "string" | "object";
   required?: boolean;
 }
 
