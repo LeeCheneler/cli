@@ -64,13 +64,6 @@ ${EXAMPE_CLI_OPTIONS.name} example`);
             name: "second",
             description: "Second positional.",
             type: "number",
-            required: true,
-          },
-          {
-            name: "third",
-            description: "Third positional.",
-            type: "boolean",
-            required: false,
           },
         ],
       })
@@ -81,13 +74,12 @@ ${EXAMPE_CLI_OPTIONS.name} example`);
 
 Usage:
 
-${EXAMPE_CLI_OPTIONS.name} example [first] [second] [third]
+${EXAMPE_CLI_OPTIONS.name} example [first] [second]
 
 Positionals:
 
 first  - First positional.  (string, required)
-second - Second positional. (number, required)
-third  - Third positional.  (boolean)`);
+second - Second positional. (number)`);
   });
 
   it("arguments", async () => {
@@ -144,31 +136,24 @@ third  - Third argument.  (boolean)`);
             name: "second",
             description: "Second positional.",
             type: "number",
-            required: true,
-          },
-          {
-            name: "third",
-            description: "Third positional.",
-            type: "boolean",
-            required: false,
           },
         ],
         arguments: [
           {
+            name: "third",
+            description: "Third argument.",
+            type: "string",
+            required: true,
+          },
+          {
             name: "fourth",
             description: "Fourth argument.",
-            type: "string",
+            type: "number",
             required: true,
           },
           {
             name: "fifth",
             description: "Fifth argument.",
-            type: "number",
-            required: true,
-          },
-          {
-            name: "sixth",
-            description: "Sixth argument.",
             type: "boolean",
             required: false,
           },
@@ -181,18 +166,17 @@ third  - Third argument.  (boolean)`);
 
 Usage:
 
-${EXAMPE_CLI_OPTIONS.name} example [first] [second] [third]
+${EXAMPE_CLI_OPTIONS.name} example [first] [second]
 
 Positionals:
 
 first  - First positional.  (string, required)
-second - Second positional. (number, required)
-third  - Third positional.  (boolean)
+second - Second positional. (number)
 
 Arguments:
 
-fourth - Fourth argument. (string, required)
-fifth  - Fifth argument.  (number, required)
-sixth  - Sixth argument.  (boolean)`);
+third  - Third argument.  (string, required)
+fourth - Fourth argument. (number, required)
+fifth  - Fifth argument.  (boolean)`);
   });
 });

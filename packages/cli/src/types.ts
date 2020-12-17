@@ -3,7 +3,7 @@ import { ParsedArgs } from "minimist";
 export interface Positional {
   name: string;
   description: string;
-  type: "boolean" | "number" | "string";
+  type: "number" | "string";
   required?: boolean;
 }
 
