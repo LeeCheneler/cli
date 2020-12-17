@@ -1,22 +1,31 @@
 import { ParsedArgs } from "minimist";
 
+export interface Positional {
+  name: string;
+  description: string;
+  type: "boolean" | "number" | "string";
+  required?: boolean;
+}
+
+export interface Argument {
+  name: string;
+  description: string;
+  type: "boolean" | "number" | "string";
+  required?: boolean;
+}
+
 export interface Context<TParsedArgs = {}> {
   args: string[];
   code: number;
   commands: {
     name: string;
     description: string;
+    positionals?: Positional[];
+    arguments?: Argument[];
   }[];
   commandName: string | null;
   parsedArgs: TParsedArgs & ParsedArgs;
   throw: (code: number, message: string) => void;
-  assert: (passed: boolean, message: string) => void;
-  assertType: (
-    name: string,
-    value: any,
-    expectedType: "boolean" | "number" | "string"
-  ) => void;
-  assertRequired: (name: string, value: any) => void;
 }
 
 export type NextFunction = () => Promise<void>;

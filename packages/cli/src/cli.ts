@@ -1,5 +1,5 @@
 import minimist from "minimist";
-import { Context, NextFunction, MiddlwareFunction } from "./types";
+import { Argument, Context, NextFunction, MiddlwareFunction } from "./types";
 import { CliError } from "./errors";
 import { errorHandler } from "./middleware/error-handler";
 import { version } from "./commands/version";
@@ -11,7 +11,11 @@ export interface Cli {
   useCommand: (
     name: string,
     description: string,
-    middleware: MiddlwareFunction
+    middleware: MiddlwareFunction,
+    options?: {
+      positionals?: Argument[];
+      arguments?: Argument[];
+    }
   ) => Cli;
   run: (args: string[]) => Promise<{ code: number }>;
 }
@@ -33,24 +37,24 @@ export const createCli = (options: CreateCliOptions): Cli => {
     throw: (code: number, message: string) => {
       throw new CliError(code, message);
     },
-    assert: (passed: boolean, message: string) => {
-      if (!passed) {
-        context.throw(1, message);
-      }
-    },
-    assertType: (
-      name: string,
-      value: any,
-      expectedType: "boolean" | "number" | "string"
-    ) => {
-      context.assert(
-        typeof value === expectedType,
-        `Argument "${name}" must be a ${expectedType}.`
-      );
-    },
-    assertRequired: (name: string, value: any) => {
-      context.assert(value !== undefined, `Argument "${name}" is required.`);
-    },
+    // assert: (passed: boolean, message: string) => {
+    //   if (!passed) {
+    //     context.throw(1, message);
+    //   }
+    // },
+    // assertType: (
+    //   name: string,
+    //   value: any,
+    //   expectedType: "boolean" | "number" | "string"
+    // ) => {
+    //   context.assert(
+    //     typeof value === expectedType,
+    //     `Argument "${name}" must be a ${expectedType}.`
+    //   );
+    // },
+    // assertRequired: (name: string, value: any) => {
+    //   context.assert(value !== undefined, `Argument "${name}" is required.`);
+    // },
   };
 
   const cli: Cli = {
@@ -58,10 +62,12 @@ export const createCli = (options: CreateCliOptions): Cli => {
       middlewares.push(middleware);
       return cli;
     },
-    useCommand: (name, description, middleware) => {
+    useCommand: (name, description, middleware, options) => {
       context.commands.push({
         name,
         description,
+        arguments: options?.arguments ?? [],
+        positionals: options?.positionals ?? [],
       });
 
       const commandMiddleware: MiddlwareFunction = async (
@@ -85,7 +91,16 @@ export const createCli = (options: CreateCliOptions): Cli => {
       cli.useCommand(
         "help",
         "Display help.",
-        help({ name: options.name, description: options.description })
+        help({ name: options.name, description: options.description }),
+        {
+          positionals: [
+            {
+              name: "command",
+              description: "Command to display help for.",
+              type: "string",
+            },
+          ],
+        }
       );
 
       // ensure a known command is provided

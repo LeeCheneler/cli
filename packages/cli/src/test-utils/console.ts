@@ -2,7 +2,6 @@ interface MockConsoleResult {
   log: jest.Mock;
   error: jest.Mock;
   warn: jest.Mock;
-  restore: () => void;
   reset: () => void;
 }
 
@@ -23,11 +22,6 @@ export const mockConsole = (): MockConsoleResult => {
       consoleLogMock.mockReset();
       consoleErrorMock.mockReset();
       consoleWarnMock.mockReset();
-    },
-    restore: () => {
-      consoleLogMock.mockRestore();
-      consoleErrorMock.mockRestore();
-      consoleWarnMock.mockRestore();
     },
   };
 };

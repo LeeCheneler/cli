@@ -1,16 +1,8 @@
 import { createCli, Context, NextFunction } from "@leecheneler/cli";
 import pkg from "../package.json";
 
-const throwExample = async (
-  ctx: Context<{ code: number }>,
-  next: NextFunction
-) => {
-  ctx.assertRequired("code", ctx.parsedArgs.code);
-  ctx.assertType("code", ctx.parsedArgs.code, "number");
-  ctx.throw(
-    ctx.parsedArgs.code,
-    `Program exiting with code ${ctx.parsedArgs.code}.`
-  );
+const example = async (ctx: Context, next: NextFunction) => {
+  console.log("hello world!");
   await next();
 };
 
@@ -18,6 +10,47 @@ export const bootstrap = () => {
   return createCli({
     version: pkg.version,
     description: "An example CLI tool.",
-    name: "example",
-  }).useCommand("throw-example", "Throw an error on purpose.", throwExample);
+    name: "cli",
+  }).useCommand("example", "Example command.", example, {
+    positionals: [
+      {
+        name: "first",
+        description: "First positional.",
+        type: "string",
+        required: true,
+      },
+      {
+        name: "second",
+        description: "Second positional.",
+        type: "number",
+        required: true,
+      },
+      {
+        name: "third",
+        description: "Third positional.",
+        type: "boolean",
+        required: false,
+      },
+    ],
+    arguments: [
+      {
+        name: "fourth",
+        description: "Fourth argument.",
+        type: "string",
+        required: true,
+      },
+      {
+        name: "fifth",
+        description: "Fifth argument.",
+        type: "number",
+        required: true,
+      },
+      {
+        name: "sixth",
+        description: "Sixth argument.",
+        type: "boolean",
+        required: false,
+      },
+    ],
+  });
 };
