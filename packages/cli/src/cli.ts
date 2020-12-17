@@ -1,5 +1,11 @@
 import minimist from "minimist";
-import { Argument, Context, NextFunction, MiddlwareFunction } from "./types";
+import {
+  Argument,
+  Context,
+  NextFunction,
+  MiddlwareFunction,
+  Positional,
+} from "./types";
 import { CliError } from "./errors";
 import { errorHandler } from "./middleware/error-handler";
 import { version } from "./commands/version";
@@ -13,7 +19,7 @@ export interface Cli {
     description: string,
     middleware: MiddlwareFunction,
     options?: {
-      positionals?: Argument[];
+      positionals?: Positional[];
       arguments?: Argument[];
     }
   ) => Cli;
@@ -66,8 +72,8 @@ export const createCli = (options: CreateCliOptions): Cli => {
       context.commands.push({
         name,
         description,
-        arguments: options?.arguments ?? [],
-        positionals: options?.positionals ?? [],
+        arguments: options?.arguments,
+        positionals: options?.positionals,
       });
 
       const commandMiddleware: MiddlwareFunction = async (

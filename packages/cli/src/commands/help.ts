@@ -17,7 +17,7 @@ export const help = (options: HelpOptions) => async (
   if (commandName) {
     const command = ctx.commands.find((c) => c.name === commandName);
 
-    if (!command) {
+    if (command === undefined) {
       ctx.throw(
         1,
         `Command "${commandName}" not recognised. Run "${options.name} help" to see a list of commands.`
@@ -25,24 +25,26 @@ export const help = (options: HelpOptions) => async (
     }
 
     // description
-    const description = `${command.description}\n\n`;
+    const description = `${command!.description}\n\n`;
 
     // usage
-    const positionalUsageList =
-      ` ${command.positionals
-        ?.map((a) => `[${a.name}]`)
-        .join(" ")}`.trimEnd() ?? "";
-    const usage = `Usage:\n\n${options.name} ${command.name}${positionalUsageList}\n\n`;
+    const positionalExample = command!.positionals?.length
+      ? " [positionals]"
+      : "";
+    const argumentsExample = command!.arguments?.length ? " [--arguments]" : "";
+    const usage = `Usage:\n\n${options.name} ${
+      command!.name
+    }${positionalExample}${argumentsExample}\n\n`;
 
     // positionals
     const positionalsNameWidth = getMaxLength(
-      command.positionals.map((p) => p.name)
+      command!.positionals?.map((p) => p.name) ?? []
     );
     const positionalsDescriptionWidth = getMaxLength(
-      command.positionals.map((p) => p.description)
+      command!.positionals?.map((p) => p.description) ?? []
     );
-    const positionalsList = command.positionals
-      .map((p) => {
+    const positionalsList = command!.positionals
+      ?.map((p) => {
         const name = p.name.padEnd(positionalsNameWidth, " ");
         const description = p.description.padEnd(
           positionalsDescriptionWidth,
@@ -54,20 +56,20 @@ export const help = (options: HelpOptions) => async (
       })
       .join("\n");
 
-    const positionals = command.positionals?.length
+    const positionals = command!.positionals?.length
       ? `Positionals:\n\n${positionalsList}\n\n`
       : "";
 
     // arguments
     const argumentsNameWidth = getMaxLength(
-      command.arguments.map((p) => p.name)
+      command!.arguments?.map((p) => p.name) ?? []
     );
     const argumentsDescriptionWidth = getMaxLength(
-      command.arguments.map((p) => p.description)
+      command!.arguments?.map((p) => p.description) ?? []
     );
 
-    const argumentsList = command.arguments
-      .map((a) => {
+    const argumentsList = command!.arguments
+      ?.map((a) => {
         const name = a.name.padEnd(argumentsNameWidth, " ");
         const description = a.description.padEnd(
           argumentsDescriptionWidth,
@@ -79,7 +81,7 @@ export const help = (options: HelpOptions) => async (
       })
       .join("\n");
 
-    const args = command.arguments?.length
+    const args = command!.arguments?.length
       ? `Arguments:\n\n${argumentsList}\n\n`
       : "";
 
@@ -91,7 +93,7 @@ export const help = (options: HelpOptions) => async (
     const description = `${options.description}\n\n`;
 
     // usage
-    const usage = `Usage:\n\n${options.name} [command] [...options]\n\n`;
+    const usage = `Usage:\n\n${options.name} [command] [positionals] [--arguments]\n\n`;
 
     // commands
     const commandNameWidth = getMaxLength(ctx.commands.map((c) => c.name));

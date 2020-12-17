@@ -17,7 +17,7 @@ it("should print help", async () => {
 
 Usage:
 
-${EXAMPE_CLI_OPTIONS.name} [command] [...options]
+${EXAMPE_CLI_OPTIONS.name} [command] [positionals] [--arguments]
 
 Commands:
 
@@ -74,7 +74,7 @@ ${EXAMPE_CLI_OPTIONS.name} example`);
 
 Usage:
 
-${EXAMPE_CLI_OPTIONS.name} example [first] [second]
+${EXAMPE_CLI_OPTIONS.name} example [positionals]
 
 Positionals:
 
@@ -113,7 +113,7 @@ second - Second positional. (number)`);
 
 Usage:
 
-${EXAMPE_CLI_OPTIONS.name} example
+${EXAMPE_CLI_OPTIONS.name} example [--arguments]
 
 Arguments:
 
@@ -166,7 +166,7 @@ third  - Third argument.  (boolean)`);
 
 Usage:
 
-${EXAMPE_CLI_OPTIONS.name} example [first] [second]
+${EXAMPE_CLI_OPTIONS.name} example [positionals] [--arguments]
 
 Positionals:
 

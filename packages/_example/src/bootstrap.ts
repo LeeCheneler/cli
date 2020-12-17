@@ -25,12 +25,6 @@ export const bootstrap = () => {
         type: "number",
         required: true,
       },
-      {
-        name: "third",
-        description: "Third positional.",
-        type: "boolean",
-        required: false,
-      },
     ],
     arguments: [
       {
