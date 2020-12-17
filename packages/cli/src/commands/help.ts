@@ -29,9 +29,9 @@ export const help = (options: HelpOptions) => async (
 
     // usage
     const positionalExample = command!.positionals?.length
-      ? " [positionals]"
+      ? " [positional]"
       : "";
-    const argumentsExample = command!.arguments?.length ? " [--arguments]" : "";
+    const argumentsExample = command!.arguments?.length ? " [--argument]" : "";
     const usage = `Usage:\n\n${options.name} ${
       command!.name
     }${positionalExample}${argumentsExample}\n\n`;
@@ -93,7 +93,7 @@ export const help = (options: HelpOptions) => async (
     const description = `${options.description}\n\n`;
 
     // usage
-    const usage = `Usage:\n\n${options.name} [command] [positionals] [--arguments]\n\n`;
+    const usage = `Usage:\n\n${options.name} [command] [positional] [--argument]\n\n`;
 
     // commands
     const commandNameWidth = getMaxLength(ctx.commands.map((c) => c.name));

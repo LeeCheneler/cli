@@ -1,50 +1,33 @@
 import { createCli, Context, NextFunction } from "@leecheneler/cli";
 import pkg from "../package.json";
 
-const example = async (ctx: Context, next: NextFunction) => {
-  console.log("hello world!");
-  await next();
-};
-
 export const bootstrap = () => {
-  return createCli({
+  interface HelloArgs {
+    name: string;
+  }
+
+  const hello = async (ctx: Context<HelloArgs>, next: NextFunction) => {
+    console.log(`Hello ${ctx.parsedArgs.name}!`);
+
+    await next();
+  };
+
+  const cli = createCli({
+    name: "example",
+    description: "Example CLI.",
     version: pkg.version,
-    description: "An example CLI tool.",
-    name: "cli",
-  }).useCommand("example", "Example command.", example, {
-    positionals: [
+  });
+
+  cli.useCommand("hello", "Say hello.", hello, {
+    arguments: [
       {
-        name: "first",
-        description: "First positional.",
+        name: "name",
+        description: "Name to say hello to.",
         type: "string",
         required: true,
       },
-      {
-        name: "second",
-        description: "Second positional.",
-        type: "number",
-        required: true,
-      },
-    ],
-    arguments: [
-      {
-        name: "fourth",
-        description: "Fourth argument.",
-        type: "object",
-        required: true,
-      },
-      {
-        name: "fifth",
-        description: "Fifth argument.",
-        type: "number",
-        required: true,
-      },
-      {
-        name: "sixth",
-        description: "Sixth argument.",
-        type: "boolean",
-        required: false,
-      },
     ],
   });
+
+  return cli;
 };

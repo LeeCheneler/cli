@@ -1,6 +1,7 @@
 {
   "name": "@leecheneler/cli",
   "version": "1.0.0",
+  "description": "Write command based CLI tools using TypeScript.",
   "private": false,
   "main": "dist/main.cjs.js",
   "module": "dist/main.esm.js",
