@@ -43,24 +43,21 @@ export const createCli = (options: CreateCliOptions): Cli => {
     throw: (code: number, message: string) => {
       throw new CliError(code, message);
     },
-    // assert: (passed: boolean, message: string) => {
-    //   if (!passed) {
-    //     context.throw(1, message);
-    //   }
-    // },
-    // assertType: (
-    //   name: string,
-    //   value: any,
-    //   expectedType: "boolean" | "number" | "string"
-    // ) => {
-    //   context.assert(
-    //     typeof value === expectedType,
-    //     `Argument "${name}" must be a ${expectedType}.`
-    //   );
-    // },
-    // assertRequired: (name: string, value: any) => {
-    //   context.assert(value !== undefined, `Argument "${name}" is required.`);
-    // },
+  };
+  const assert = (passed: boolean, message: string) => {
+    if (!passed) {
+      context.throw(1, message);
+    }
+  };
+  const assertType = (
+    name: string,
+    value: any,
+    expectedType: "boolean" | "number" | "string"
+  ) => {
+    assert(
+      typeof value === expectedType,
+      `Argument "${name}" must be a ${expectedType}.`
+    );
   };
 
   const cli: Cli = {
@@ -81,6 +78,28 @@ export const createCli = (options: CreateCliOptions): Cli => {
         next: NextFunction
       ) => {
         if (context.commandName === name) {
+          // assert required arguments
+          const requiredArguments =
+            options?.arguments?.filter((a) => a.required) ?? [];
+          for (let a of requiredArguments) {
+            assert(
+              context.parsedArgs[a.name] !== undefined,
+              `Argument "${a.name}" is required.`
+            );
+          }
+
+          // assert required positionals
+          const requiredPositionals =
+            options?.positionals
+              ?.filter((p) => p.required)
+              .map((p, i) => ({ name: p.name, index: i })) ?? [];
+          for (let p of requiredPositionals) {
+            assert(
+              context.parsedArgs._[p.index] !== undefined,
+              `Positional "${p.name}" is required.`
+            );
+          }
+
           await middleware(ctx, next);
         } else {
           await next();
