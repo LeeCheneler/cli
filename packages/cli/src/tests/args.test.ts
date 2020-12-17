@@ -35,7 +35,7 @@ it("should attach args and parsed to the context", async () => {
     .run(args);
 });
 
-it("should enforce required argumentss", async () => {
+it("should enforce required arguments", async () => {
   const result = await createCli(EXAMPE_CLI_OPTIONS)
     .useCommand("example", "Example command.", async () => {}, {
       arguments: [
@@ -69,4 +69,42 @@ it("should enforce required positionals", async () => {
 
   expect(result.code).toBe(1);
   expect(console.error).toHaveBeenCalledWith(`Positional "first" is required.`);
+});
+
+it("should enforce argument types", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      arguments: [
+        {
+          name: "first",
+          description: "First.",
+          type: "string",
+        },
+      ],
+    })
+    .run(["example", "--first=5"]);
+
+  expect(result.code).toBe(1);
+  expect(console.error).toHaveBeenCalledWith(
+    `Argument "first" must be of type string.`
+  );
+});
+
+it("should enforce positionals types", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      positionals: [
+        {
+          name: "first",
+          description: "First.",
+          type: "number",
+        },
+      ],
+    })
+    .run(["example", "five"]);
+
+  expect(result.code).toBe(1);
+  expect(console.error).toHaveBeenCalledWith(
+    `Positional "first" must be of type number.`
+  );
 });

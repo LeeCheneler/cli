@@ -7,3 +7,4 @@ Fed up of yargs and how poor its typescript support is and how poor is for testi
 ## TODO
 
 - enforce types of arguments and positionals
+- add object type

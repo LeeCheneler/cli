@@ -49,16 +49,6 @@ export const createCli = (options: CreateCliOptions): Cli => {
       context.throw(1, message);
     }
   };
-  const assertType = (
-    name: string,
-    value: any,
-    expectedType: "boolean" | "number" | "string"
-  ) => {
-    assert(
-      typeof value === expectedType,
-      `Argument "${name}" must be a ${expectedType}.`
-    );
-  };
 
   const cli: Cli = {
     use: (middleware) => {
@@ -97,6 +87,30 @@ export const createCli = (options: CreateCliOptions): Cli => {
             assert(
               context.parsedArgs._[p.index] !== undefined,
               `Positional "${p.name}" is required.`
+            );
+          }
+
+          // assert argument types
+          const providedArguments =
+            options?.arguments?.filter(
+              (a) => context.parsedArgs[a.name] !== undefined
+            ) ?? [];
+          for (let a of providedArguments) {
+            assert(
+              typeof context.parsedArgs[a.name] === a.type,
+              `Argument "${a.name}" must be of type ${a.type}.`
+            );
+          }
+
+          // assert positional types
+          const providedPositionals =
+            options?.positionals
+              ?.filter((p, i) => context.parsedArgs._[i] !== undefined)
+              .map((p, i) => ({ name: p.name, index: i, type: p.type })) ?? [];
+          for (let p of providedPositionals) {
+            assert(
+              typeof context.parsedArgs._[p.index] === p.type,
+              `Positional "${p.name}" must be of type ${p.type}.`
             );
           }
 
