@@ -3,6 +3,17 @@
   "version": "1.0.0-beta.1",
   "description": "Write command based CLI tools using TypeScript.",
   "private": false,
+  "repository": {
+    "url": "https://github.com/ts-engine/ts-engine"
+  },
+  "author": {
+    "name": "Lee Cheneler"
+  },
+  "license": "MIT",
+  "keywords": [
+    "cli",
+    "command"
+  ],
   "main": "dist/main.cjs.js",
   "module": "dist/main.esm.js",
   "types": "dist/main.d.ts",

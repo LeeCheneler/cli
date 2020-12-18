@@ -10,7 +10,7 @@ yarn add @leecheneler/cli
 
 ### Getting started
 
-A basic CLI tool example.
+A basic CLI tool example:
 
 ```ts
 import { createCli, Context, NextFunction } from "@leecheneler/cli";
@@ -57,6 +57,8 @@ cli
  * > Hello Mary!
  */
 ```
+
+On a successful run the returned promise will resolve with code `0`. If an unexpected error occurred then it will throw with the error.
 
 ## Middleware
 
@@ -167,6 +169,16 @@ cli.useCommand(
  */
 ```
 
+## Expected errors conveniance API
+
+There is a conveniance API to log to stderr and resolve with a given code using `ctx.throw(...)`.
+
+Exiting with code `1` and logging `Example error message.` to stderr:
+
+```ts
+ctx.throw(1, "Example error message.");
+```
+
 ## Default commands
 
 ### Version
@@ -196,7 +208,7 @@ A `help` command is available automatically:
 > version - Display version.
 > help    - Display help.
 >
-> Run "example help [command]" for command usage.
+> Run "cli help [command]" for command usage.
 ```
 
 Commands also have their own help display:
