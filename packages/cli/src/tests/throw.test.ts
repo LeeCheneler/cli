@@ -24,7 +24,7 @@ describe("ctx.throw()", () => {
 describe("thrown error", () => {
   it("should throw the error", async () => {
     const error = new Error();
-    expect(() =>
+    await expect(() =>
       createCli(EXAMPE_CLI_OPTIONS)
         .use(async () => {
           throw error;

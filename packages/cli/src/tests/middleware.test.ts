@@ -50,8 +50,7 @@ it("should execute next middlware only if next() is called", async () => {
 });
 
 it("should throw error if next() is called multiple times", async () => {
-  const error = new Error();
-  expect(() =>
+  await expect(() =>
     createCli(EXAMPE_CLI_OPTIONS)
       .use(async (ctx, next) => {
         await next();
