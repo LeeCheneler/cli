@@ -27,6 +27,14 @@ export const bootstrap = () => {
         required: true,
       },
     ],
+    positionals: [
+      {
+        name: "other",
+        description: "Name to say hello to.",
+        type: "string",
+        required: true,
+      },
+    ],
   });
 
   return cli;
