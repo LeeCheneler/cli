@@ -12,7 +12,8 @@
   "license": "MIT",
   "keywords": [
     "cli",
-    "command"
+    "command",
+    "middleware"
   ],
   "main": "dist/main.cjs.js",
   "module": "dist/main.esm.js",
