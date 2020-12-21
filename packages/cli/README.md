@@ -181,47 +181,7 @@ ctx.throw(1, "Example error message.");
 
 ## Default commands
 
-### Version
+There are a couple of baked in default commands:
 
-A `version` command is available automatically:
-
-```sh
-> cli version
-> 1.0.0
-```
-
-### Help
-
-A `help` command is available automatically:
-
-```sh
-> cli help
-> Example CLI.
->
-> Usage:
->
-> cli [command] [positional] [--argument]
->
-> Commands:
->
-> hello   - Say hello.
-> version - Display version.
-> help    - Display help.
->
-> Run "cli help [command]" for command usage.
-```
-
-Commands also have their own help display:
-
-```sh
-> cli help hello
-> Say hello.
->
-> Usage:
->
-> cli hello [--argument]
->
-> Arguments:
->
-> name - Name to say hello to. (string, required)
-```
+- `help` - Displays help with list of commands, `help [command]` displays help for specific commands.
+- `version` - Displays the current version
