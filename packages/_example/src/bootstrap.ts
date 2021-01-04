@@ -7,7 +7,7 @@ export const bootstrap = () => {
   }
 
   const hello = async (ctx: Context<HelloArgs>, next: NextFunction) => {
-    console.log(`Hello ${ctx.parsedArgs.name}!`);
+    console.log(`Hello ${ctx.options.name}!`);
 
     await next();
   };
@@ -30,7 +30,7 @@ export const bootstrap = () => {
     positionals: [
       {
         name: "other",
-        description: "Name to say hello to.",
+        description: "Other name to say hello to.",
         type: "string",
         required: true,
       },

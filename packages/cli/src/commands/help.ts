@@ -1,3 +1,4 @@
+import { format } from "../format";
 import { Context, NextFunction } from "../types";
 
 const getMaxLength = (list: string[]) => {
@@ -13,14 +14,17 @@ export const help = (options: HelpOptions) => async (
   ctx: Context,
   next: NextFunction
 ) => {
-  const [commandName] = ctx.args;
+  const [commandName] = ctx.rawOptions;
   if (commandName) {
     const command = ctx.commands.find((c) => c.name === commandName);
 
     if (command === undefined) {
       ctx.throw(
         1,
-        `Command "${commandName}" not recognised. Run "${options.name} help" to see a list of commands.`
+
+        `${format.error`Command "${commandName}" not recognised.`}
+
+Run "${options.name} help" to see a list of commands.`
       );
     }
 
@@ -35,57 +39,65 @@ export const help = (options: HelpOptions) => async (
       command!.name
     }${positionalExample}\n\n`;
 
-    // positionals
-    const positionalsNameWidth = getMaxLength(
+    // option widths
+    const positionalsMaxNameWidth = getMaxLength(
       command!.positionals?.map((p) => p.name) ?? []
     );
-    const positionalsDescriptionWidth = getMaxLength(
+    const positionalsMaxDescriptionWidth = getMaxLength(
       command!.positionals?.map((p) => p.description) ?? []
     );
-    const positionalsList = command!.positionals
-      ?.map((p) => {
-        const name = p.name.padEnd(positionalsNameWidth, " ");
-        const description = p.description.padEnd(
-          positionalsDescriptionWidth,
-          " "
-        );
-        const type = p.type;
-        const required = p.required ? ", required" : "";
-        return `${name} - ${description} (${type}${required})`;
-      })
-      .join("\n");
 
-    const positionals = command!.positionals?.length
-      ? `Positionals:\n\n${positionalsList}\n\n`
-      : "";
-
-    // arguments
-    const argumentsNameWidth = getMaxLength(
+    const argumentsMaxNameWidth = getMaxLength(
       command!.arguments?.map((p) => p.name) ?? []
     );
-    const argumentsDescriptionWidth = getMaxLength(
+    const argumentsMaxDescriptionWidth = getMaxLength(
       command!.arguments?.map((p) => p.description) ?? []
     );
 
-    const argumentsList = command!.arguments
-      ?.map((a) => {
-        const name = a.name.padEnd(argumentsNameWidth, " ");
-        const description = a.description.padEnd(
-          argumentsDescriptionWidth,
-          " "
-        );
-        const type = a.type;
-        const required = a.required ? ", required" : "";
-        return `${name} - ${description} (${type}${required})`;
-      })
-      .join("\n");
+    // Add 2 for option decorations "--" and "[]"
+    const optionNameWidth =
+      Math.max(positionalsMaxNameWidth, argumentsMaxNameWidth) + 2;
+    const optionDescriptionWidth = Math.max(
+      positionalsMaxDescriptionWidth,
+      argumentsMaxDescriptionWidth
+    );
 
-    const args = command!.arguments?.length
-      ? `Arguments:\n\n${argumentsList}\n\n`
-      : "";
+    // positionals
+    const positionalsList =
+      command?.positionals
+        ?.map((p) => {
+          const name = `[${p.name}]`.padEnd(optionNameWidth, " ");
+          const description = p.description.padEnd(optionDescriptionWidth, " ");
+          const type = p.type;
+          const required = p.required ? ", required" : "";
+          return `${name} - ${description} (${type}${required})`;
+        })
+        .join("\n") ?? "";
+
+    // arguments
+    const argumentsList =
+      command?.arguments
+        ?.map((a) => {
+          const name = `--${a.name}`.padEnd(optionNameWidth, " ");
+          const description = a.description.padEnd(optionDescriptionWidth, " ");
+          const type = a.type;
+          const required = a.required ? ", required" : "";
+          return `${name} - ${description} (${type}${required})`;
+        })
+        .join("\n") ?? "";
+
+    // options
+    const hasArguments = !!command?.arguments?.length;
+    const hasPositionals = !!command?.positionals?.length;
+    const optionsList =
+      hasArguments || hasPositionals
+        ? `Options:\n\n${positionalsList}${
+            hasArguments && hasPositionals ? "\n" : ""
+          }${argumentsList}\n\n`
+        : "";
 
     // final output
-    const output = `${description}${usage}${positionals}${args}`.trimEnd();
+    const output = `${description}${usage}${optionsList}`.trimEnd();
     console.log(output);
   } else {
     // decription

@@ -8,7 +8,7 @@ afterEach(() => {
   consoleMock.reset();
 });
 
-it("should attach args and parsed to the context", async () => {
+it("should attach options to the context", async () => {
   const args = [
     "version",
     "hello",
@@ -21,8 +21,8 @@ it("should attach args and parsed to the context", async () => {
   ];
   await createCli(EXAMPE_CLI_OPTIONS)
     .use(async (ctx: { value: string } & Context) => {
-      expect(ctx.args).toEqual(args.slice(1));
-      expect(ctx.parsedArgs).toEqual({
+      expect(ctx.rawOptions).toEqual(args.slice(1));
+      expect(ctx.options).toEqual({
         _: ["hello", "world"],
         one: 1,
         two: "two",
@@ -50,7 +50,9 @@ it("should enforce required arguments", async () => {
     .run(["example"]);
 
   expect(result.code).toBe(1);
-  expect(console.error).toHaveBeenCalledWith(`Argument "first" is required.`);
+  expect(console.error).toHaveBeenCalledWith(`Option --first is required.
+
+Run "${EXAMPE_CLI_OPTIONS.name} help example" to see help for this command.`);
 });
 
 it("should enforce required positionals", async () => {
@@ -68,7 +70,9 @@ it("should enforce required positionals", async () => {
     .run(["example"]);
 
   expect(result.code).toBe(1);
-  expect(console.error).toHaveBeenCalledWith(`Positional "first" is required.`);
+  expect(console.error).toHaveBeenCalledWith(`Option [first] is required.
+
+Run "${EXAMPE_CLI_OPTIONS.name} help example" to see help for this command.`);
 });
 
 it("should enforce argument types", async () => {
@@ -86,7 +90,9 @@ it("should enforce argument types", async () => {
 
   expect(result.code).toBe(1);
   expect(console.error).toHaveBeenCalledWith(
-    `Argument "first" must be of type string.`
+    `Option --first must be of type string.
+
+Run "${EXAMPE_CLI_OPTIONS.name} help example" to see help for this command.`
   );
 });
 
@@ -105,6 +111,8 @@ it("should enforce positionals types", async () => {
 
   expect(result.code).toBe(1);
   expect(console.error).toHaveBeenCalledWith(
-    `Positional "first" must be of type number.`
+    `Option [first] must be of type number.
+
+Run "${EXAMPE_CLI_OPTIONS.name} help example" to see help for this command.`
   );
 });

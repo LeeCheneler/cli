@@ -11,6 +11,7 @@ import { errorHandler } from "./middleware/error-handler";
 import { version } from "./commands/version";
 import { help } from "./commands/help";
 import { composeMiddleware } from "./compose-middleware";
+import { format } from "./format";
 
 export interface Cli {
   use: (middlware: MiddlwareFunction) => Cli;
@@ -32,11 +33,11 @@ export interface CreateCliOptions {
   description: string;
 }
 
-export const createCli = (options: CreateCliOptions): Cli => {
+export const createCli = (createCliOptions: CreateCliOptions): Cli => {
   const middlewares: MiddlwareFunction[] = [];
   const context: Context = {
-    args: [],
-    parsedArgs: { _: [] },
+    rawOptions: [],
+    options: { _: [] },
     code: 0,
     commands: [],
     commandName: "unknown",
@@ -68,13 +69,17 @@ export const createCli = (options: CreateCliOptions): Cli => {
         next: NextFunction
       ) => {
         if (context.commandName === name) {
+          const helpCommandSuggestion = `Run "${createCliOptions.name} help ${name}" to see help for this command.`;
+
           // assert required arguments
           const requiredArguments =
             options?.arguments?.filter((a) => a.required) ?? [];
           for (let a of requiredArguments) {
             assert(
-              context.parsedArgs[a.name] !== undefined,
-              `Argument "${a.name}" is required.`
+              context.options[a.name] !== undefined,
+              `${format.error`Option --${a.name} is required.`}
+
+${helpCommandSuggestion}`
             );
           }
 
@@ -85,32 +90,38 @@ export const createCli = (options: CreateCliOptions): Cli => {
               .map((p, i) => ({ name: p.name, index: i })) ?? [];
           for (let p of requiredPositionals) {
             assert(
-              context.parsedArgs._[p.index] !== undefined,
-              `Positional "${p.name}" is required.`
+              context.options._[p.index] !== undefined,
+              `${format.error`Option [${p.name}] is required.`}
+
+${helpCommandSuggestion}`
             );
           }
 
           // assert argument types
           const providedArguments =
             options?.arguments?.filter(
-              (a) => context.parsedArgs[a.name] !== undefined
+              (a) => context.options[a.name] !== undefined
             ) ?? [];
           for (let a of providedArguments) {
             assert(
-              typeof context.parsedArgs[a.name] === a.type,
-              `Argument "${a.name}" must be of type ${a.type}.`
+              typeof context.options[a.name] === a.type,
+              `${format.error`Option --${a.name} must be of type ${a.type}.`}
+
+${helpCommandSuggestion}`
             );
           }
 
           // assert positional types
           const providedPositionals =
             options?.positionals
-              ?.filter((p, i) => context.parsedArgs._[i] !== undefined)
+              ?.filter((p, i) => context.options._[i] !== undefined)
               .map((p, i) => ({ name: p.name, index: i, type: p.type })) ?? [];
           for (let p of providedPositionals) {
             assert(
-              typeof context.parsedArgs._[p.index] === p.type,
-              `Positional "${p.name}" must be of type ${p.type}.`
+              typeof context.options._[p.index] === p.type,
+              `${format.error`Option [${p.name}] must be of type ${p.type}.`}
+
+${helpCommandSuggestion}`
             );
           }
 
@@ -126,11 +137,18 @@ export const createCli = (options: CreateCliOptions): Cli => {
     },
     run: async (args: string[]) => {
       // register default commands
-      cli.useCommand("version", "Display version.", version(options.version));
+      cli.useCommand(
+        "version",
+        "Display version.",
+        version(createCliOptions.version)
+      );
       cli.useCommand(
         "help",
         "Display help.",
-        help({ name: options.name, description: options.description }),
+        help({
+          name: createCliOptions.name,
+          description: createCliOptions.description,
+        }),
         {
           positionals: [
             {
@@ -144,14 +162,16 @@ export const createCli = (options: CreateCliOptions): Cli => {
 
       // ensure a known command is provided
       if (args.length === 0) {
-        console.error("Please provide a command.");
+        console.error(format.error`Please provide a command.`);
         return { code: 1 };
       }
 
       context.commandName = args[0];
       if (!context.commands.find((c) => c.name === context.commandName)) {
         console.error(
-          `Command "${context.commandName}" not recognised. Run "${options.name} help" to see a list of commands.`
+          `${format.error`Command "${context.commandName}" not recognised.`}
+
+Run "${createCliOptions.name} help" to see a list of commands.`
         );
         return { code: 1 };
       }
@@ -159,8 +179,8 @@ export const createCli = (options: CreateCliOptions): Cli => {
       // parse args and run
       const [, ...remainingArgs] = args;
 
-      context.args = remainingArgs;
-      context.parsedArgs = minimist(remainingArgs);
+      context.rawOptions = remainingArgs;
+      context.options = minimist(remainingArgs);
 
       await composeMiddleware(middlewares)(context);
       return { code: context.code };

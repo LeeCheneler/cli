@@ -20,7 +20,9 @@ it("should exit with 1 and suggest running help if unknown command is provided",
 
   expect(result.code).toBe(1);
   expect(consoleMock.error).toHaveBeenCalledWith(
-    `Command "unknown" not recognised. Run "${EXAMPE_CLI_OPTIONS.name} help" to see a list of commands.`
+    `Command "unknown" not recognised.
+
+Run "${EXAMPE_CLI_OPTIONS.name} help" to see a list of commands.`
   );
 });
 

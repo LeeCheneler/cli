@@ -32,7 +32,9 @@ it("should exit with 1 and suggest running help if unknown command is provided",
 
   expect(result.code).toBe(1);
   expect(consoleMock.error).toHaveBeenCalledWith(
-    `Command "unknown" not recognised. Run "${EXAMPE_CLI_OPTIONS.name} help" to see a list of commands.`
+    `Command "unknown" not recognised.
+
+Run "${EXAMPE_CLI_OPTIONS.name} help" to see a list of commands.`
   );
 });
 
@@ -76,10 +78,10 @@ Usage:
 
 ${EXAMPE_CLI_OPTIONS.name} example [first] [second]
 
-Positionals:
+Options:
 
-first  - First positional.  (string, required)
-second - Second positional. (number)`);
+[first]  - First positional.  (string, required)
+[second] - Second positional. (number)`);
   });
 
   it("arguments", async () => {
@@ -115,11 +117,11 @@ Usage:
 
 ${EXAMPE_CLI_OPTIONS.name} example
 
-Arguments:
+Options:
 
-first  - First argument.  (string, required)
-second - Second argument. (number, required)
-third  - Third argument.  (boolean)`);
+--first  - First argument.  (string, required)
+--second - Second argument. (number, required)
+--third  - Third argument.  (boolean)`);
   });
 
   it("positionals and arguments", async () => {
@@ -168,15 +170,12 @@ Usage:
 
 ${EXAMPE_CLI_OPTIONS.name} example [first] [second]
 
-Positionals:
+Options:
 
-first  - First positional.  (string, required)
-second - Second positional. (number)
-
-Arguments:
-
-third  - Third argument.  (string, required)
-fourth - Fourth argument. (number, required)
-fifth  - Fifth argument.  (boolean)`);
+[first]  - First positional.  (string, required)
+[second] - Second positional. (number)
+--third  - Third argument.    (string, required)
+--fourth - Fourth argument.   (number, required)
+--fifth  - Fifth argument.    (boolean)`);
   });
 });

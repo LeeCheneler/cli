@@ -14,8 +14,8 @@ export interface Argument {
   required?: boolean;
 }
 
-export interface Context<TParsedArgs = {}> {
-  args: string[];
+export interface Context<TOptions = {}> {
+  rawOptions: string[];
   code: number;
   commands: {
     name: string;
@@ -24,7 +24,7 @@ export interface Context<TParsedArgs = {}> {
     arguments?: Argument[];
   }[];
   commandName: string | null;
-  parsedArgs: TParsedArgs & ParsedArgs;
+  options: TOptions & ParsedArgs;
   throw: (code: number, message: string) => void;
 }
 
