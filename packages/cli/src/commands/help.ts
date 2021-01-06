@@ -1,4 +1,3 @@
-import { format } from "../format";
 import { Context, NextFunction } from "../types";
 
 const getMaxLength = (list: string[]) => {
@@ -22,7 +21,7 @@ export const help = (options: HelpOptions) => async (
       ctx.throw(
         1,
 
-        `${format.error`Command "${commandName}" not recognised.`}
+        `Command "${commandName}" not recognised.
 
 Run "${options.name} help" to see a list of commands.`
       );

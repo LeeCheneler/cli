@@ -11,7 +11,6 @@ import { errorHandler } from "./middleware/error-handler";
 import { version } from "./commands/version";
 import { help } from "./commands/help";
 import { composeMiddleware } from "./compose-middleware";
-import { format } from "./format";
 
 export interface Cli {
   use: (middlware: MiddlwareFunction) => Cli;
@@ -77,7 +76,7 @@ export const createCli = (createCliOptions: CreateCliOptions): Cli => {
           for (let a of requiredArguments) {
             assert(
               context.options[a.name] !== undefined,
-              `${format.error`Option --${a.name} is required.`}
+              `Option --${a.name} is required.
 
 ${helpCommandSuggestion}`
             );
@@ -91,7 +90,7 @@ ${helpCommandSuggestion}`
           for (let p of requiredPositionals) {
             assert(
               context.options._[p.index] !== undefined,
-              `${format.error`Option [${p.name}] is required.`}
+              `Option [${p.name}] is required.
 
 ${helpCommandSuggestion}`
             );
@@ -105,7 +104,7 @@ ${helpCommandSuggestion}`
           for (let a of providedArguments) {
             assert(
               typeof context.options[a.name] === a.type,
-              `${format.error`Option --${a.name} must be of type ${a.type}.`}
+              `Option --${a.name} must be of type ${a.type}.
 
 ${helpCommandSuggestion}`
             );
@@ -119,7 +118,7 @@ ${helpCommandSuggestion}`
           for (let p of providedPositionals) {
             assert(
               typeof context.options._[p.index] === p.type,
-              `${format.error`Option [${p.name}] must be of type ${p.type}.`}
+              `Option [${p.name}] must be of type ${p.type}.
 
 ${helpCommandSuggestion}`
             );
@@ -162,14 +161,14 @@ ${helpCommandSuggestion}`
 
       // ensure a known command is provided
       if (args.length === 0) {
-        console.error(format.error`Please provide a command.`);
+        console.error("Please provide a command.");
         return { code: 1 };
       }
 
       context.commandName = args[0];
       if (!context.commands.find((c) => c.name === context.commandName)) {
         console.error(
-          `${format.error`Command "${context.commandName}" not recognised.`}
+          `Command "${context.commandName}" not recognised.
 
 Run "${createCliOptions.name} help" to see a list of commands.`
         );

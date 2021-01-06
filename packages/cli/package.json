@@ -1,6 +1,6 @@
 {
   "name": "@leecheneler/cli",
-  "version": "1.0.0-beta.5",
+  "version": "1.0.0-beta.6",
   "description": "Write command based CLI tools using TypeScript.",
   "private": false,
   "repository": {
@@ -32,11 +32,9 @@
   },
   "devDependencies": {
     "@ts-engine/cli": "^1.11.0",
-    "@types/chalk": "^2.2.0",
     "@types/minimist": "^1.2.1"
   },
   "dependencies": {
-    "chalk": "^4.1.0",
     "minimist": "^1.2.5"
   },
   "publishConfig": {
