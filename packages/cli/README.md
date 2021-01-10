@@ -159,6 +159,12 @@ cli.useCommand(
         type: "string",
         required: true,
       },
+      {
+        name: "other-names",
+        description: "Middle and last names.",
+        type: "string",
+        array: true, // the last positional can optionally be an array too
+      },
     ],
   }
 );

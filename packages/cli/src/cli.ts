@@ -56,6 +56,22 @@ export const createCli = (createCliOptions: CreateCliOptions): Cli => {
       return cli;
     },
     useCommand: (name, description, middleware, options) => {
+      // Ensure only the last positional is an array
+      if (options?.positionals?.length > 1) {
+        const precedingPositionals = options.positionals?.slice(
+          0,
+          options.positionals?.length - 1
+        );
+
+        for (let p of precedingPositionals) {
+          if (p.array) {
+            throw new Error(
+              `Positional "${p.name}" can not be an array. Only the last positional can be an array.`
+            );
+          }
+        }
+      }
+
       context.commands.push({
         name,
         description,

@@ -38,41 +38,40 @@ Run "${EXAMPE_CLI_OPTIONS.name} help" to see a list of commands.`
   );
 });
 
-describe("command help", () => {
-  it("no positionals or arguments", async () => {
-    const result = await createCli(EXAMPE_CLI_OPTIONS)
-      .useCommand("example", "Example command.", async () => {})
-      .run(["help", "example"]);
+it("no positionals or arguments", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {})
+    .run(["help", "example"]);
 
-    expect(result.code).toBe(0);
-    expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
+  expect(result.code).toBe(0);
+  expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
 
 Usage:
 
 ${EXAMPE_CLI_OPTIONS.name} example`);
-  });
+});
 
-  it("positionals", async () => {
-    const result = await createCli(EXAMPE_CLI_OPTIONS)
-      .useCommand("example", "Example command.", async () => {}, {
-        positionals: [
-          {
-            name: "first",
-            description: "First positional.",
-            type: "string",
-            required: true,
-          },
-          {
-            name: "second",
-            description: "Second positional.",
-            type: "number",
-          },
-        ],
-      })
-      .run(["help", "example"]);
+it("positionals", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      positionals: [
+        {
+          name: "first",
+          description: "First positional.",
+          type: "string",
+          required: true,
+        },
+        {
+          name: "second",
+          description: "Second positional.",
+          type: "number",
+        },
+      ],
+    })
+    .run(["help", "example"]);
 
-    expect(result.code).toBe(0);
-    expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
+  expect(result.code).toBe(0);
+  expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
 
 Usage:
 
@@ -82,36 +81,36 @@ Options:
 
 [first]  - First positional.  (string, required)
 [second] - Second positional. (number)`);
-  });
+});
 
-  it("arguments", async () => {
-    const result = await createCli(EXAMPE_CLI_OPTIONS)
-      .useCommand("example", "Example command.", async () => {}, {
-        arguments: [
-          {
-            name: "first",
-            description: "First argument.",
-            type: "string",
-            required: true,
-          },
-          {
-            name: "second",
-            description: "Second argument.",
-            type: "number",
-            required: true,
-          },
-          {
-            name: "third",
-            description: "Third argument.",
-            type: "boolean",
-            required: false,
-          },
-        ],
-      })
-      .run(["help", "example"]);
+it("arguments", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      arguments: [
+        {
+          name: "first",
+          description: "First argument.",
+          type: "string",
+          required: true,
+        },
+        {
+          name: "second",
+          description: "Second argument.",
+          type: "number",
+          required: true,
+        },
+        {
+          name: "third",
+          description: "Third argument.",
+          type: "boolean",
+          required: false,
+        },
+      ],
+    })
+    .run(["help", "example"]);
 
-    expect(result.code).toBe(0);
-    expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
+  expect(result.code).toBe(0);
+  expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
 
 Usage:
 
@@ -122,49 +121,49 @@ Options:
 --first  - First argument.  (string, required)
 --second - Second argument. (number, required)
 --third  - Third argument.  (boolean)`);
-  });
+});
 
-  it("positionals and arguments", async () => {
-    const result = await createCli(EXAMPE_CLI_OPTIONS)
-      .useCommand("example", "Example command.", async () => {}, {
-        positionals: [
-          {
-            name: "first",
-            description: "First positional.",
-            type: "string",
-            required: true,
-          },
-          {
-            name: "second",
-            description: "Second positional.",
-            type: "number",
-          },
-        ],
-        arguments: [
-          {
-            name: "third",
-            description: "Third argument.",
-            type: "string",
-            required: true,
-          },
-          {
-            name: "fourth",
-            description: "Fourth argument.",
-            type: "number",
-            required: true,
-          },
-          {
-            name: "fifth",
-            description: "Fifth argument.",
-            type: "boolean",
-            required: false,
-          },
-        ],
-      })
-      .run(["help", "example"]);
+it("positionals and arguments", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      positionals: [
+        {
+          name: "first",
+          description: "First positional.",
+          type: "string",
+          required: true,
+        },
+        {
+          name: "second",
+          description: "Second positional.",
+          type: "number",
+        },
+      ],
+      arguments: [
+        {
+          name: "third",
+          description: "Third argument.",
+          type: "string",
+          required: true,
+        },
+        {
+          name: "fourth",
+          description: "Fourth argument.",
+          type: "number",
+          required: true,
+        },
+        {
+          name: "fifth",
+          description: "Fifth argument.",
+          type: "boolean",
+          required: false,
+        },
+      ],
+    })
+    .run(["help", "example"]);
 
-    expect(result.code).toBe(0);
-    expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
+  expect(result.code).toBe(0);
+  expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
 
 Usage:
 
@@ -177,5 +176,31 @@ Options:
 --third  - Third argument.    (string, required)
 --fourth - Fourth argument.   (number, required)
 --fifth  - Fifth argument.    (boolean)`);
-  });
+});
+
+it("array positional", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      positionals: [
+        {
+          name: "first",
+          description: "First positional.",
+          type: "string",
+          required: true,
+          array: true,
+        },
+      ],
+    })
+    .run(["help", "example"]);
+
+  expect(result.code).toBe(0);
+  expect(consoleMock.log).toHaveBeenCalledWith(`Example command.
+
+Usage:
+
+${EXAMPE_CLI_OPTIONS.name} example [first...]
+
+Options:
+
+[first] - First positional. (string[], required)`);
 });

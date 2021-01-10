@@ -116,3 +116,30 @@ it("should enforce positionals types", async () => {
 Run "${EXAMPE_CLI_OPTIONS.name} help example" to see help for this command.`
   );
 });
+
+it("should only allow the last positional to be an array", async () => {
+  expect(() =>
+    createCli(EXAMPE_CLI_OPTIONS).useCommand(
+      "example",
+      "Example command.",
+      async () => {},
+      {
+        positionals: [
+          {
+            name: "first",
+            description: "First.",
+            type: "number",
+            array: true,
+          },
+          {
+            name: "second",
+            description: "Second.",
+            type: "number",
+          },
+        ],
+      }
+    )
+  ).toThrowError(
+    `Positional "first" can not be an array. Only the last positional can be an array.`
+  );
+});

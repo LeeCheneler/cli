@@ -32,7 +32,9 @@ Run "${options.name} help" to see a list of commands.`
 
     // usage
     const positionalExample = command!.positionals?.length
-      ? ` ${command!.positionals.map((p) => `[${p.name}]`).join(" ")}`
+      ? ` ${command!.positionals
+          .map((p) => `[${p.name}${p.array ? "..." : ""}]`)
+          .join(" ")}`
       : "";
     const usage = `Usage:\n\n${options.name} ${
       command!.name
@@ -67,7 +69,7 @@ Run "${options.name} help" to see a list of commands.`
         ?.map((p) => {
           const name = `[${p.name}]`.padEnd(optionNameWidth, " ");
           const description = p.description.padEnd(optionDescriptionWidth, " ");
-          const type = p.type;
+          const type = `${p.type}${p.array ? "[]" : ""}`;
           const required = p.required ? ", required" : "";
           return `${name} - ${description} (${type}${required})`;
         })

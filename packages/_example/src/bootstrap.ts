@@ -7,7 +7,8 @@ export const bootstrap = () => {
   }
 
   const hello = async (ctx: Context<HelloArgs>, next: NextFunction) => {
-    console.log(`Hello ${ctx.options.name}!`);
+    const [name] = ctx.options._;
+    console.log(`Hello ${name}!`);
 
     await next();
   };
@@ -19,18 +20,10 @@ export const bootstrap = () => {
   });
 
   cli.useCommand("hello", "Say hello.", hello, {
-    arguments: [
+    positionals: [
       {
         name: "name",
         description: "Name to say hello to.",
-        type: "string",
-        required: true,
-      },
-    ],
-    positionals: [
-      {
-        name: "other",
-        description: "Other name to say hello to.",
         type: "string",
         required: true,
       },

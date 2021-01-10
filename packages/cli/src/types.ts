@@ -5,6 +5,7 @@ export interface Positional {
   description: string;
   type: "number" | "string";
   required?: boolean;
+  array?: boolean;
 }
 
 export interface Argument {
