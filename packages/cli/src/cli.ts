@@ -57,10 +57,10 @@ export const createCli = (createCliOptions: CreateCliOptions): Cli => {
     },
     useCommand: (name, description, middleware, options) => {
       // Ensure only the last positional is an array
-      if (options?.positionals?.length > 1) {
-        const precedingPositionals = options.positionals?.slice(
+      if (options?.positionals && options.positionals.length > 1) {
+        const precedingPositionals = options.positionals.slice(
           0,
-          options.positionals?.length - 1
+          options.positionals.length - 1
         );
 
         for (let p of precedingPositionals) {
