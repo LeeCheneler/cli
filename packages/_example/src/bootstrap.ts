@@ -28,6 +28,13 @@ export const bootstrap = () => {
         required: true,
       },
     ],
+    arguments: [
+      {
+        name: "check",
+        description: "Check booleans parsing correctly.",
+        type: "boolean",
+      },
+    ],
   });
 
   return cli;
