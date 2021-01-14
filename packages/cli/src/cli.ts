@@ -182,7 +182,10 @@ ${helpCommandSuggestion}`
       }
 
       context.commandName = args[0];
-      if (!context.commands.find((c) => c.name === context.commandName)) {
+      const command = context.commands.find(
+        (c) => c.name === context.commandName
+      );
+      if (!command) {
         console.error(
           `Command "${context.commandName}" not recognised.
 
@@ -195,7 +198,14 @@ Run "${createCliOptions.name} help" to see a list of commands.`
       const [, ...remainingArgs] = args;
 
       context.rawOptions = remainingArgs;
-      context.options = minimist(remainingArgs);
+      context.options = minimist(remainingArgs, {
+        boolean: command.arguments
+          .filter((a) => a.type === "boolean")
+          .map((a) => a.name),
+        string: command.arguments
+          .filter((a) => a.type === "string")
+          .map((a) => a.name),
+      });
 
       await composeMiddleware(middlewares)(context);
       return { code: context.code };
