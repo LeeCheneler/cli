@@ -200,11 +200,11 @@ Run "${createCliOptions.name} help" to see a list of commands.`
       context.rawOptions = remainingArgs;
       context.options = minimist(remainingArgs, {
         boolean:
-          command.arguments
+          command?.arguments
             ?.filter((a) => a.type === "boolean")
             .map((a) => a.name) ?? [],
         string:
-          command.arguments
+          command?.arguments
             ?.filter((a) => a.type === "string")
             .map((a) => a.name) ?? [],
       });
