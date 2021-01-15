@@ -10,6 +10,8 @@ export const bootstrap = () => {
     const [name] = ctx.options._;
     console.log(`Hello ${name}!`);
 
+    console.log(ctx.options);
+
     await next();
   };
 

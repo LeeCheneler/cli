@@ -199,12 +199,14 @@ Run "${createCliOptions.name} help" to see a list of commands.`
 
       context.rawOptions = remainingArgs;
       context.options = minimist(remainingArgs, {
-        boolean: command.arguments
-          .filter((a) => a.type === "boolean")
-          .map((a) => a.name),
-        string: command.arguments
-          .filter((a) => a.type === "string")
-          .map((a) => a.name),
+        boolean:
+          command.arguments
+            ?.filter((a) => a.type === "boolean")
+            .map((a) => a.name) ?? [],
+        string:
+          command.arguments
+            ?.filter((a) => a.type === "string")
+            .map((a) => a.name) ?? [],
       });
 
       await composeMiddleware(middlewares)(context);

@@ -82,15 +82,15 @@ it("should enforce argument types", async () => {
         {
           name: "first",
           description: "First.",
-          type: "string",
+          type: "number",
         },
       ],
     })
-    .run(["example", "--first=5"]);
+    .run(["example", "--first=abc"]);
 
   expect(result.code).toBe(1);
   expect(console.error).toHaveBeenCalledWith(
-    `Option --first must be of type string.
+    `Option --first must be of type number.
 
 Run "${EXAMPE_CLI_OPTIONS.name} help example" to see help for this command.`
   );
@@ -142,4 +142,61 @@ it("should only allow the last positional to be an array", async () => {
   ).toThrowError(
     `Positional "first" can not be an array. Only the last positional can be an array.`
   );
+});
+
+it("should parse boolean options as booleans", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      arguments: [
+        {
+          name: "first",
+          description: "First.",
+          type: "boolean",
+        },
+      ],
+    })
+    .use(async (ctx: Context<{ first: boolean }>) => {
+      expect(ctx.options.first).toBe(true);
+    })
+    .run(["example", "--first=true"]);
+
+  expect(result.code).toBe(0);
+});
+
+it("should default boolean options to false", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      arguments: [
+        {
+          name: "first",
+          description: "First.",
+          type: "boolean",
+        },
+      ],
+    })
+    .use(async (ctx: Context<{ first: boolean }>) => {
+      expect(ctx.options.first).toBe(false);
+    })
+    .run(["example"]);
+
+  expect(result.code).toBe(0);
+});
+
+it("should parse numbers as strings when option is string type", async () => {
+  const result = await createCli(EXAMPE_CLI_OPTIONS)
+    .useCommand("example", "Example command.", async () => {}, {
+      arguments: [
+        {
+          name: "first",
+          description: "First.",
+          type: "string",
+        },
+      ],
+    })
+    .use(async (ctx: Context<{ first: boolean }>) => {
+      expect(ctx.options.first).toBe("123");
+    })
+    .run(["example", "--first=123"]);
+
+  expect(result.code).toBe(0);
 });
